@@ -1,0 +1,174 @@
+import random
+import cv2
+import time
+import serial
+import math     #just cos I wanted to play around
+
+
+from custom_timer import CustomTimer
+from face_and_hand_reading import HandDetection
+from face_and_hand_reading import FaceDetection
+
+#MAKE A FLOWCHART OF THE MAIN FUNCTION PLS
+
+
+def random_start_tracker() -> tuple:
+    trackers = ["face", "hand"]
+    set_attacker = ""
+
+    set_tracked = random.choice(trackers)
+    if set_tracked == "face":
+        set_attacker = "bot"
+    elif set_tracked == "hand":
+        set_attacker = "man"
+    
+    return set_tracked, set_attacker
+
+
+def bot_decision(past_bot_dirs) -> str:
+    directions = {"UP", "DOWN", "LEFT", "RIGHT"}
+
+    available_dirs_set = directions - past_bot_dirs
+    available_dirs_list = list(available_dirs_set)
+
+    bot_dir = random.choice(available_dirs_list)
+
+    return bot_dir
+
+
+def round_decisiveness(man_dir, bot_dir) -> bool:
+    if man_dir == bot_dir:
+        return True
+    
+    return False
+
+
+def switch_roles(curr_tracker) -> tuple:
+    set_curr_tracker, set_attacker = "", ""
+
+    if curr_tracker == "hand":
+        set_curr_tracker = "face"
+        set_attacker = "bot"
+    elif curr_tracker == "face":
+        set_curr_tracker = "hand"
+        set_attacker = "man"
+
+    return set_curr_tracker, set_attacker
+
+
+
+def main() -> None:
+    hand_detection, face_detection = HandDetection(), FaceDetection()
+
+    arduino_serial = serial.Serial('COM9', 9600)
+    time.sleep(10)
+
+    curr_tracker, attacker = random_start_tracker()
+    if curr_tracker == "hand":
+        tracker = hand_detection
+    else:
+        tracker = face_detection
+    man_dir = "NONE"
+
+    round_interval_time = 3
+    dir_gather_moment_time = 2
+    transition_time = 2
+
+    custom_timer = CustomTimer()
+
+    past_bot_dirs = set()
+
+    strike_count = 0
+    strike_out_count = 3
+    
+    #only for debugging and playing around:
+    last_read_time = 0
+
+    servo_reset = True
+    servo_reset_str = "RESET"
+
+    cap = cv2.VideoCapture(1)        #camera switch
+    start_time = time.time()
+
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        timestamp_ms = int((time.time() - start_time) * 1000)
+        
+        custom_timer.resume()
+
+        if custom_timer.elapsed() >= last_read_time + 1:
+            print(round_interval_time - math.floor(custom_timer.elapsed()))
+            last_read_time += 1
+
+        man_dir_check = False
+        round_check = False
+        bot_dir = "NONE"
+
+        if custom_timer.elapsed() >= dir_gather_moment_time:
+            man_dir_check = True
+
+        result = tracker.update(frame, timestamp_ms, man_dir_check)
+        tracker.draw(frame, result)
+        cv2.imshow("", frame)
+
+
+        if custom_timer.elapsed() >= round_interval_time:
+            man_dir = tracker.get_direction()
+
+            if man_dir == "NONE":
+                print("PICK A DIRECTION DUMMY! TRY AGAIN!")
+                time.sleep(2)
+                custom_timer.reset()
+                custom_timer.pause()
+                last_read_time = 0
+                continue
+
+            bot_dir = bot_decision(past_bot_dirs)
+            past_bot_dirs.add(bot_dir)
+            print(f"Bot: {bot_dir}  vs  You: {man_dir}")
+            arduino_serial.write((bot_dir + "\n").encode())
+            custom_timer.reset()
+            custom_timer.pause()
+            last_read_time = 0
+            time.sleep(transition_time)
+            round_check = True
+            servo_reset = False
+
+            if round_check and round_decisiveness(man_dir, bot_dir):
+                strike_count += 1
+                continue
+            elif round_check and not round_decisiveness(man_dir, bot_dir):
+                curr_tracker, attacker = switch_roles(curr_tracker)
+                past_bot_dirs.clear()
+                strike_count = 0
+        elif not servo_reset:
+            arduino_serial.write((servo_reset_str + "\n").encode())
+            servo_reset = True
+
+        if curr_tracker == "hand":
+            tracker = hand_detection
+        elif curr_tracker == "face":
+            tracker = face_detection
+
+
+
+        if strike_count == strike_out_count:
+            print(f"Winner: {attacker}")
+            time.sleep(10)
+            break
+    
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    
+
+    
+    cap.release()
+    cv2.destroyAllWindows()
+    arduino_serial.close()
+
+
+if __name__ == "__main__":
+    main()
