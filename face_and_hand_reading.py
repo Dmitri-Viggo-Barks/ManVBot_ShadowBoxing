@@ -31,8 +31,8 @@ class HandDetection:
         dir_x = avg_x - hand[0].x
         dir_y = avg_y - hand[0].y
 
-#        #for debugging
-        #print(f"dir_x={dir_x:.4f}, dir_y={dir_y:.4f},")
+        # #for debugging
+        # print(f"dir_x={dir_x:.4f}, dir_y={dir_y:.4f},")
 
         if abs(dir_x) > (abs(dir_y) * 1.5):
             if dir_x > 0:
@@ -136,8 +136,8 @@ class FaceDetection:
         dir_y = nose_tip_point.y - center_y
 
         
-#        #for debugging
-#        print(f"dir_x={dir_x:.4f}, dir_y={dir_y:.4f}")
+        ##for debugging
+        #print(f"dir_x={dir_x:.4f}, dir_y={dir_y:.4f}")
 
         if abs(dir_x) > (abs(dir_y) * 1.5):
             if dir_x > 0:
@@ -166,8 +166,8 @@ class FaceDetection:
             detected_direction = self.get_tracked_direction(result.face_landmarks[0])
             self.direction_history.append(detected_direction)
 
-            # for debugging:
-            # print(f"count in dir history: {len(self.direction_history)}")
+            ##for debugging:
+            #print(f"count in dir history: {len(self.direction_history)}")
 
             direction_counts = Counter(self.direction_history)
             self.direction = direction_counts.most_common(1)[0][0]

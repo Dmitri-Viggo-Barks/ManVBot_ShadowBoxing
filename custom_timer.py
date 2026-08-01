@@ -35,25 +35,3 @@ class CustomTimer:
 
 if __name__ == "__main__":
     pass
-    
-
-
-# cus_timer = CustomTimer()
-
-
-# time.sleep(3)
-# print(cus_timer.elapsed(), "->", int(cus_timer.elapsed()))
-
-# cus_timer.pause()
-# time.sleep(5)
-
-# print("time_lib: ", time.time(), " vs ", "custom_timer: ", cus_timer.elapsed())
-
-# time.sleep(4)
-
-# cus_timer.reset()
-# print("reset timer: ", cus_timer.elapsed())
-
-# print("Sleeping timer to 3 seconds...")
-# time.sleep(6)
-# print(cus_timer.elapsed())

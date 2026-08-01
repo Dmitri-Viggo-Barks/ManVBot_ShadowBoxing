@@ -2,14 +2,12 @@ import random
 import cv2
 import time
 import serial
-import math     #just cos I wanted to play around
 
 
 from custom_timer import CustomTimer
 from face_and_hand_reading import HandDetection
 from face_and_hand_reading import FaceDetection
 
-#MAKE A FLOWCHART OF THE MAIN FUNCTION PLS
 
 
 def random_start_tracker() -> tuple:
@@ -60,7 +58,7 @@ def switch_roles(curr_tracker) -> tuple:
 def main() -> None:
     hand_detection, face_detection = HandDetection(), FaceDetection()
 
-    arduino_serial = serial.Serial('COM9', 9600)
+    arduino_serial = serial.Serial(port="/dev/ttyUSB0", baudrate=9600)
     time.sleep(10)
 
     curr_tracker, attacker = random_start_tracker()
@@ -82,12 +80,12 @@ def main() -> None:
     strike_out_count = 3
     
     #only for debugging and playing around:
-    last_read_time = 0
+    #last_read_time = 0
 
     servo_reset = True
     servo_reset_str = "RESET"
 
-    cap = cv2.VideoCapture(1)        #camera switch
+    cap = cv2.VideoCapture(0)        #camera switch
     start_time = time.time()
 
 
@@ -99,9 +97,9 @@ def main() -> None:
         
         custom_timer.resume()
 
-        if custom_timer.elapsed() >= last_read_time + 1:
-            print(round_interval_time - math.floor(custom_timer.elapsed()))
-            last_read_time += 1
+        # if custom_timer.elapsed() >= last_read_time + 1:
+        #     print(round_interval_time - math.floor(custom_timer.elapsed()))
+        #     last_read_time += 1
 
         man_dir_check = False
         round_check = False
