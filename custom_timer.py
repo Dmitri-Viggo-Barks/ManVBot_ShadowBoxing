@@ -1,7 +1,5 @@
 import time
 
-import math
-
 
 class CustomTimer:
     def __init__ (self) -> None:
@@ -59,4 +57,3 @@ if __name__ == "__main__":
 # print("Sleeping timer to 3 seconds...")
 # time.sleep(6)
 # print(cus_timer.elapsed())
-
