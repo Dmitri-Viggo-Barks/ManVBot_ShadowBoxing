@@ -7,8 +7,8 @@ const int HoriServoPin = 7;
 const int VertiServoPin = 8;
 
 const int DefaultAngle = 90;
-const int PositiveAngle = 180;
-const int NegativeAngle = 0;
+const int PositiveAngle = 0;
+const int NegativeAngle = 180;
 
 
 void reset_servos_pos(){
@@ -40,9 +40,9 @@ void loop(){
       vertiServo.write(NegativeAngle);
     }
 
-    if (bot_dir == "RIGHT"){
+    if (bot_dir == "LEFT"){
       horiServo.write(PositiveAngle);
-    } else if (bot_dir == "LEFT"){
+    } else if (bot_dir == "RIGHT"){
       horiServo.write(NegativeAngle);
     }
   }
