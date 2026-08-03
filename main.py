@@ -51,8 +51,8 @@ def switch_roles(curr_tracker) -> tuple:
 def main() -> None:
     hand_detection, face_detection = HandDetection(), FaceDetection()
 
-    arduino_serial = serial.Serial(port="/dev/ttyUSB0", baudrate=9600)
-    time.sleep(10)
+    arduino_serial = serial.Serial(port = "/dev/ttyUSB0", baudrate = 9600)
+    time.sleep(5)
 
     # curr_tracker, attacker = random_start_tracker()
     curr_tracker, attacker = "hand", "man"
@@ -62,9 +62,9 @@ def main() -> None:
         tracker = face_detection
     man_dir = "NONE"
 
-    round_interval_time = 3
+    round_interval_time = 5
     dir_gather_moment_time = 2
-    transition_time = 2
+    transition_time = 0.5
 
     custom_timer = CustomTimer()
 
@@ -109,8 +109,8 @@ def main() -> None:
             man_dir = tracker.get_direction()
 
             if man_dir == "NONE":
-                print("PICK A DIRECTION DUMMY! TRY AGAIN!")
-                time.sleep(2)
+                print("TRY AGAIN!")
+                time.sleep(1.5)
                 custom_timer.reset()
                 custom_timer.pause()
                 last_read_time = 0
