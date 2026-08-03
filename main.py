@@ -5,20 +5,21 @@ from face_and_hand_reading import HandDetection, FaceDetection
 
 
 
-def random_start_tracker() -> tuple:
-    trackers = ["face", "hand"]
-    set_attacker = ""
+# def random_start_tracker() -> tuple:
+#     trackers = ["face", "hand"]
+#     set_attacker = ""
 
-    set_tracked = random.choice(trackers)
-    if set_tracked == "face":
-        set_attacker = "bot"
-    elif set_tracked == "hand":
-        set_attacker = "man"
+#     set_tracked = random.choice(trackers)
+#     if set_tracked == "face":
+#         set_attacker = "bot"
+#     elif set_tracked == "hand":
+#         set_attacker = "man"
     
-    return set_tracked, set_attacker
+#     return set_tracked, set_attacker
 
 
 def bot_decision(past_bot_dirs) -> str:
+
     directions = {"UP", "DOWN", "LEFT", "RIGHT"}
 
     available_dirs = list(directions - past_bot_dirs)
@@ -53,7 +54,8 @@ def main() -> None:
     arduino_serial = serial.Serial(port="/dev/ttyUSB0", baudrate=9600)
     time.sleep(10)
 
-    curr_tracker, attacker = random_start_tracker()
+    # curr_tracker, attacker = random_start_tracker()
+    curr_tracker, attacker = "hand", "man"
     if curr_tracker == "hand":
         tracker = hand_detection
     else:
