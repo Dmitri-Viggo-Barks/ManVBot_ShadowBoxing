@@ -79,9 +79,14 @@ def main() -> None:
 
     cap = cv2.VideoCapture(index = 1)        #camera switch
     start_time = time.time()
+    begin_input = ""
 
 
     while True:
+
+        if begin_input != "BEGIN":
+            begin_input = input("INPUT 'BEGIN' TO START: ")
+
         ret, frame = cap.read()
         if not ret:
             break
