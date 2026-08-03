@@ -75,10 +75,9 @@ def main() -> None:
     #only for debugging and playing around:
     #last_read_time = 0
 
-    servo_reset = True
-    servo_reset_str = "RESET"
+    servo_reset = "RESET"
 
-    cap = cv2.VideoCapture(0)        #camera switch
+    cap = cv2.VideoCapture(index = 1)        #camera switch
     start_time = time.time()
 
 
@@ -125,7 +124,6 @@ def main() -> None:
             last_read_time = 0
             time.sleep(transition_time)
             round_check = True
-            servo_reset = False
 
             if round_check and round_decisiveness(man_dir, bot_dir):
                 strike_count += 1
@@ -134,15 +132,13 @@ def main() -> None:
                 curr_tracker, attacker = switch_roles(curr_tracker)
                 past_bot_dirs.clear()
                 strike_count = 0
-        elif not servo_reset:
-            arduino_serial.write((servo_reset_str + "\n").encode())
-            servo_reset = True
+
+        arduino_serial.write((servo_reset + "\n").encode())
 
         if curr_tracker == "hand":
             tracker = hand_detection
         elif curr_tracker == "face":
             tracker = face_detection
-
 
 
         if strike_count == strike_out_count:
