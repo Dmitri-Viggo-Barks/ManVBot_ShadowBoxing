@@ -147,16 +147,16 @@ class FaceDetection:
         ##for debugging
         #print(f"dir_x={dir_x:.4f}, dir_y={dir_y:.4f}")
 
-        if abs(dir_x) > (abs(dir_y) * 1.5):
-            if dir_x > 0:
-                return "LEFT"
-            else:
-                return "RIGHT"
-        elif abs(dir_y) > abs(dir_x):
+        if abs(dir_y) > abs(dir_x):
             if dir_y > 0:
                 return "DOWN"
             else:
                 return "UP"
+        elif abs(dir_x) > (abs(dir_y) * 1.5):
+            if dir_x > 0:
+                return "LEFT"
+            else:
+                return "RIGHT"
 
         return "NONE"
 
