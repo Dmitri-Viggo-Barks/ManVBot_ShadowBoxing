@@ -73,7 +73,7 @@ def main() -> None:
     strike_count, strike_out_count = 0, 2
     
     #only for debugging and playing around:
-    #last_read_time = 0
+    last_read_time = 0
 
     servo_reset = "RESET"
 
@@ -89,9 +89,13 @@ def main() -> None:
         
         custom_timer.resume()
 
-        # if custom_timer.elapsed() >= last_read_time + 1:
-        #     print(round_interval_time - math.floor(custom_timer.elapsed()))
-        #     last_read_time += 1
+        if custom_timer.elapsed() >= last_read_time + 1:
+            countdown = (round_interval_time - math.floor(custom_timer.elapsed()) - 1)
+            if countdown <= 0:
+                print("GO!")
+            else:
+                print(countdown)
+            last_read_time += 1
 
         man_dir_check, round_check = False, False
         bot_dir = "NONE"
@@ -127,6 +131,11 @@ def main() -> None:
 
             if round_check and round_decisiveness(man_dir, bot_dir):
                 strike_count += 1
+                if attacker == "man":
+                    print(f"BOT: STRIKE {strike_count} / {strike_out_count}")
+                else:
+                    print(f"YOU: STRIKE {strike_count} / {strike_out_count}")
+                time.sleep(2)
                 continue
             elif round_check and not round_decisiveness(man_dir, bot_dir):
                 curr_tracker, attacker = switch_roles(curr_tracker)
@@ -142,7 +151,11 @@ def main() -> None:
 
 
         if strike_count == strike_out_count:
-            print(f"Winner: {attacker}")
+            if attacker == "man":
+                print("Winner: YOU")
+            else:
+                print("Winner: BOT")
+
             time.sleep(10)
             break
     
