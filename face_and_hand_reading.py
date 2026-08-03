@@ -1,14 +1,16 @@
-import mediapipe as mp
+import mediapipe as mp, cv2
+
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
-import cv2
 from collections import Counter, deque
 
 
 
 class HandDetection:
 
+
     def __init__ (self) -> None:
+
         base_options = python.BaseOptions(
             model_asset_path = "hand_landmarker.task"
         )
@@ -25,6 +27,7 @@ class HandDetection:
 
 
     def get_tracked_direction(self, hand) -> str:
+
         avg_x = (hand[5].x + hand[9].x + hand[13].x + hand[17].x) / 4
         avg_y = (hand[5].y + hand[9].y + hand[13].y + hand[17].y) / 4
         
@@ -50,6 +53,7 @@ class HandDetection:
     
 
     def update(self, frame, timestamp_ms, man_dir_check):
+
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         mp_image = mp.Image(
             image_format = mp.ImageFormat.SRGB,
@@ -77,11 +81,12 @@ class HandDetection:
     
     
     def get_direction(self) -> str:
+
         return self.direction
 
-    
 
     def draw(self, frame, result) -> None:
+
         if not result.hand_landmarks:
             return
         
@@ -106,7 +111,9 @@ class HandDetection:
 
 class FaceDetection:
 
+
     def __init__ (self) -> None:
+
         base_options = python.BaseOptions(
             model_asset_path = "face_landmarker.task"
         )
@@ -123,6 +130,7 @@ class FaceDetection:
 
     
     def get_tracked_direction(self, face) -> str:
+
         nose_tip_point = face[1]
         left_cheek_point = face[234]
         right_cheek_point = face[454]
@@ -154,6 +162,7 @@ class FaceDetection:
 
 
     def update(self, frame, timestamp_ms, man_dir_check):
+
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         mp_image = mp.Image(
             image_format = mp.ImageFormat.SRGB,
@@ -181,10 +190,12 @@ class FaceDetection:
 
 
     def get_direction(self) -> str:
+
         return self.direction
     
 
     def draw(self, frame, result) -> None:
+        
         if not result.face_landmarks:
             return
         

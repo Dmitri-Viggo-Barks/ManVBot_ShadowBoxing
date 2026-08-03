@@ -1,12 +1,7 @@
-import random
-import cv2
-import time
-import serial
-
+import random, cv2, time, serial, math
 
 from custom_timer import CustomTimer
-from face_and_hand_reading import HandDetection
-from face_and_hand_reading import FaceDetection
+from face_and_hand_reading import HandDetection, FaceDetection
 
 
 
@@ -26,15 +21,13 @@ def random_start_tracker() -> tuple:
 def bot_decision(past_bot_dirs) -> str:
     directions = {"UP", "DOWN", "LEFT", "RIGHT"}
 
-    available_dirs_set = directions - past_bot_dirs
-    available_dirs_list = list(available_dirs_set)
+    available_dirs = list(directions - past_bot_dirs)
 
-    bot_dir = random.choice(available_dirs_list)
-
-    return bot_dir
+    return random.choice(available_dirs)
 
 
 def round_decisiveness(man_dir, bot_dir) -> bool:
+
     if man_dir == bot_dir:
         return True
     
@@ -42,14 +35,13 @@ def round_decisiveness(man_dir, bot_dir) -> bool:
 
 
 def switch_roles(curr_tracker) -> tuple:
+
     set_curr_tracker, set_attacker = "", ""
 
     if curr_tracker == "hand":
-        set_curr_tracker = "face"
-        set_attacker = "bot"
+        set_curr_tracker, set_attacker = "face", "bot"
     elif curr_tracker == "face":
-        set_curr_tracker = "hand"
-        set_attacker = "man"
+        set_curr_tracker, set_attacker = "hand", "man"
 
     return set_curr_tracker, set_attacker
 
@@ -76,8 +68,7 @@ def main() -> None:
 
     past_bot_dirs = set()
 
-    strike_count = 0
-    strike_out_count = 3
+    strike_count, strike_out_count = 0, 2
     
     #only for debugging and playing around:
     #last_read_time = 0
@@ -101,8 +92,7 @@ def main() -> None:
         #     print(round_interval_time - math.floor(custom_timer.elapsed()))
         #     last_read_time += 1
 
-        man_dir_check = False
-        round_check = False
+        man_dir_check, round_check = False, False
         bot_dir = "NONE"
 
         if custom_timer.elapsed() >= dir_gather_moment_time:
@@ -162,7 +152,6 @@ def main() -> None:
             break
     
 
-    
     cap.release()
     cv2.destroyAllWindows()
     arduino_serial.close()
